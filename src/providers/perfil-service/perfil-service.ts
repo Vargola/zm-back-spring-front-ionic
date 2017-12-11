@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Utils } from '../../entity/Utils';
 
@@ -18,7 +18,8 @@ export class PerfilServiceProvider {
     this.perfilUrl = Utils.getUrlBackend() + "perfil/";
   }
 
-  public getPerfis() {
-    return this.http.get(this.perfilUrl);
+  public getPerfis(token: any) {
+    let headers = new HttpHeaders().set("Authorization", "Bearer " + token);
+    return this.http.get(this.perfilUrl, { headers });
   }
 }
