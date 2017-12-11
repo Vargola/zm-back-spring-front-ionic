@@ -10,6 +10,14 @@ import { TabsPage } from '../pages/tabs/tabs';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { LoginServiceProvider } from '../providers/login-service/login-service';
+import { HttpClientModule } from '@angular/common/http';
+import { LoginPageModule } from '../pages/login/login.module';
+import { Utils } from '../entity/Utils';
+import { CookieService } from 'angular2-cookie/services/cookies.service';
+import { PerfilServiceProvider } from '../providers/perfil-service/perfil-service';
+import { InterceptorHttpService } from '../providers/InterceptorHttpService';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -21,7 +29,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    HttpClientModule,
+    LoginPageModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -34,7 +44,16 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    LoginServiceProvider,
+    Utils,
+    CookieService,
+    PerfilServiceProvider,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InterceptorHttpService,
+      multi: true
+    }
   ]
 })
-export class AppModule {}
+export class AppModule { }
