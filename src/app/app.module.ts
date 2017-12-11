@@ -18,6 +18,7 @@ import { CookieService } from 'angular2-cookie/services/cookies.service';
 import { PerfilServiceProvider } from '../providers/perfil-service/perfil-service';
 import { InterceptorHttpService } from '../providers/InterceptorHttpService';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { PerfilPageModule } from '../pages/perfil/perfil.module';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
     BrowserModule,
     IonicModule.forRoot(MyApp),
     HttpClientModule,
-    LoginPageModule
+    LoginPageModule,
+    PerfilPageModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
