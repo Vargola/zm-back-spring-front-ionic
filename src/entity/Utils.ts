@@ -1,6 +1,6 @@
 export class Utils {
     
     static getUrlBackend() {
-        return "http://localhost:8080/";
+        return "https://vargola-zm-spring-aula1.herokuapp.com/";
     }
 }
