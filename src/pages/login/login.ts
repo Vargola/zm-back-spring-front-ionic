@@ -56,6 +56,7 @@ export class LoginPage {
   public loginSuccess(res: any) {
     this.cookieService.removeAll();
     this.cookieService.put("accessToken", res.access_token);
+    this.cookieService.put("refreshToken", res.refresh_token);
     this.loginService.getUsuarioAtual(res.access_token).subscribe(
       res => {
         this.redirectPage(res as any);
@@ -74,5 +75,6 @@ export class LoginPage {
   redirectUser(res: any) {
     this.cookieService.removeAll();
     this.cookieService.put("accessToken", res.access_token);
+    this.cookieService.put("refreshToken", res.refresh_token);
   }
 }

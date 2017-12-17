@@ -14,18 +14,20 @@ import { Observable } from 'rxjs/Observable';
 export class LoginServiceProvider {
 
   private loginUrl: string;
-  public handleError: any;
+  private refreshUrl: string;
   public userUrl: string;
-
+  public handleError: any;
+  
   constructor(
     public http: HttpClient
   ) {
-    this.loginUrl = Utils.getUrlBackend() + "oauth/token?grant_type=password&username=";
+    this.loginUrl = Utils.getUrlBackend() + "oauth/token?grant_type=password&username=<USERNAME>&password=<PASSWORD>";
+    this.refreshUrl = Utils.getUrlBackend() + "oauth/token?grant_type=refresh_token&refresh_token=";
     this.userUrl = Utils.getUrlBackend() + "usuario/logado";
   }
 
   public login(usuario: Usuario): Observable<any> {
-    let url = this.loginUrl + usuario.email + "&password=" + encodeURIComponent(usuario.senha);
+    let url = this.loginUrl.replace("<USERNAME>", usuario.email).replace("<PASSWORD>", encodeURIComponent(usuario.senha));
     let headers = new HttpHeaders().set("Authorization", "Basic " + btoa("cliente" + ':' + "123"));
     return this.http.post(url, {}, { headers });
   }
@@ -33,5 +35,11 @@ export class LoginServiceProvider {
   public getUsuarioAtual(token: any) {
     let headers = new HttpHeaders().set("Authorization", "Bearer " + token);
     return this.http.get(this.userUrl, { headers });
+  }
+
+  public getAccessToken(refreshToken) {
+    let url = this.refreshUrl + refreshToken;
+    let headers = new HttpHeaders().set("Authorization", "Basic " + btoa("cliente" + ':' + "123"));
+    return this.http.post(url, {}, { headers });
   }
 }
