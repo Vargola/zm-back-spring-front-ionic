@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { HttpInterceptor, HttpHandler, HttpRequest, HttpSentEvent, HttpHeaderResponse, HttpProgressEvent, HttpResponse, HttpUserEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { CookieService } from 'angular2-cookie/services/cookies.service';
@@ -14,8 +14,9 @@ import 'rxjs/add/operator/take';
 export class InterceptorHttpService implements HttpInterceptor {
 
     constructor(
-        private cookieService: CookieService,
-        private loginService: LoginServiceProvider
+        private inj: Injector
+        //,private cookieService: CookieService
+        //private loginService: LoginServiceProvider
     ) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler):
@@ -24,32 +25,33 @@ export class InterceptorHttpService implements HttpInterceptor {
         HttpProgressEvent |
         HttpResponse<any> |
         HttpUserEvent<any>> {
-        return next.handle(
-            req.clone({
-                setHeaders: { Authorization: 'Bearer ' + this.cookieService.get("accessToken") }
-            }))
-            .catch(error => {
-                if (error instanceof HttpErrorResponse) {
-                    switch ((<HttpErrorResponse>error).status) {
-                        case 401:
-                            return this.getAccessToken(req, next);
-                        case 0:
-                            return this.getAccessToken(req, next);
-                    }
-                    Observable.throw(error);
+        //return next.handle(req);
+        //let cookieService = this.inj.get(CookieService);
+        return next.handle(req.clone({
+        })).catch(error => {
+            if (error instanceof HttpErrorResponse) {
+                switch ((<HttpErrorResponse>error).status) {
+                    case 401:
+                        return this.getAccessToken(req, next);
+                    case 0:
+                        return this.getAccessToken(req, next);
                 }
-                else {
-                    Observable.throw(error);
-                }
-            });
+                Observable.throw(error);
+            }
+            else {
+                Observable.throw(error);
+            }
+        });
     }
 
     private getAccessToken(req: HttpRequest<any>, next: HttpHandler): Observable<any> {
-        return this.loginService.getAccessToken(this.cookieService.get("refreshToken")).switchMap(
-            resp => {
-                this.cookieService.put("accessToken", (resp as any).access_token);
+        let loginService = this.inj.get(LoginServiceProvider);
+        let cookieService = this.inj.get(CookieService);
+        return loginService.getAccessToken(cookieService.get("refreshToken")).switchMap(
+            res => {
+                cookieService.put("accessToken", (res as any).access_token);
                 return next.handle(req.clone({
-                    setHeaders: { Authorization: 'Bearer ' + this.cookieService.get("accessToken") }
+                    setHeaders: { Authorization: 'Bearer ' + cookieService.get("accessToken") }
                 }));
             }
         )

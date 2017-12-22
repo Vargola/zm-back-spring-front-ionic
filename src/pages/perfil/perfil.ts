@@ -12,8 +12,8 @@ import { PerfilServiceProvider } from '../../providers/perfil-service/perfil-ser
 @IonicPage()
 @Component({
   selector: 'page-perfil',
-  templateUrl: 'perfil.html',
-  providers: [PerfilServiceProvider]
+  templateUrl: 'perfil.html'
+  //,providers: [PerfilServiceProvider]
 })
 
 export class PerfilPage {
